@@ -1,0 +1,14 @@
+{
+    "extends": "@tsconfig/node-lts/tsconfig.json",
+    "include": ["src"],
+    "exclude": ["node_modules"],
+    "compilerOptions": {
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "target": "ES6",
+        "moduleResolution": "Node",
+        "sourceMap": true,
+        "outDir": "dist"
+    },
+    "lib": ["es2015"]
+}
