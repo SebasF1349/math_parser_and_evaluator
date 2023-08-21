@@ -1,4 +1,5 @@
 import readline from "readline";
+import { Lexer } from "./lexer.js";
 
 const inquirer = readline.createInterface({
     input: process.stdin,
@@ -10,7 +11,17 @@ inquirer.question(">>", (input) => {
     if (input === "q") {
         inquirer.close();
     }
-    console.log(`>> ${input}`);
+    try {
+        const lexer = new Lexer(input);
+        lexer.getTokens();
+        console.log(`>> ${input} - ${lexer.stringify()}`);
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            console.log(`${err.name}: ${err.message}`);
+        } else {
+            console.log(err);
+        }
+    }
     inquirer.close();
 });
 
