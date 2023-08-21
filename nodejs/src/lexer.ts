@@ -1,154 +1,162 @@
-function isWhiteSpace(ch: string) {
-    return ch === "u009" || ch === " " || ch === "u00A0";
-}
-
-function isLetter(ch: string) {
-    return (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z");
-}
-
-function isDecimalDigit(ch: string) {
-    return ch >= "0" && ch <= "9";
-}
-
-function createToken(type: string, value: string) {
-    return {
-        type,
-        value,
-    };
-}
-
-// it doesn't return index
-function getNextChar(index: number, length: number) {
-    let ch = "x00";
-    let idx = index;
-    if (idx < length) {
-        ch = expression.charAt(idx);
-        index += 1;
+class Lexer {
+    index = 0;
+    length;
+    expression;
+    constructor(text: string) {
+        this.expression = text;
+        this.length = this.expression.length;
     }
-    return ch;
-}
+    isWhiteSpace(ch: string) {
+        return ch === "u009" || ch === " " || ch === "u00A0";
+    }
 
-function peekNextChar(index: number, length: number) {
-    let idx = index;
-    return idx < length ? expression.charAt(idx) : "x00";
-}
+    isLetter(ch: string) {
+        return (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z");
+    }
 
-function skipSpaces(index: number, length: number) {
-    let ch;
+    isDecimalDigit(ch: string) {
+        return ch >= "0" && ch <= "9";
+    }
 
-    while (index < length) {
-        ch = peekNextChar(index, length);
-        if (!isWhiteSpace(ch)) {
-            break;
+    createToken(type: string, value: string) {
+        return {
+            type,
+            value,
+        };
+    }
+
+    getNextChar() {
+        let ch = "x00";
+        let idx = this.index;
+        if (idx < this.length) {
+            ch = this.expression.charAt(idx);
+            this.index += 1;
         }
-        getNextChar(index, length);
+        return ch;
     }
-}
 
-function scanOperator(index: number, length: number) {
-    let ch = peekNextChar(index, length);
-    if ("+-*/()=".indexOf(ch) >= 0) {
-        return createToken("Operator", getNextChar(index, length));
+    peekNextChar() {
+        let idx = this.index;
+        return idx < this.length ? this.expression.charAt(idx) : "x00";
     }
-    return undefined;
-}
 
-function isIdentifiesStart(ch: string) {
-    return ch === "_" || isLetter(ch);
-}
+    skipSpaces() {
+        let ch;
 
-function isIdentifierPart(ch: string) {
-    return isIdentifiesStart(ch) || isDecimalDigit(ch);
-}
+        while (this.index < this.length) {
+            ch = this.peekNextChar();
+            if (!this.isWhiteSpace(ch)) {
+                break;
+            }
+            this.getNextChar();
+        }
+    }
 
-function scanIdentifier(index: number, length: number) {
-    let ch, id;
-
-    ch = peekNextChar(index, length);
-    if (!isIdentifiesStart(ch)) {
+    scanOperator() {
+        let ch = this.peekNextChar();
+        if ("+-*/()=".indexOf(ch) >= 0) {
+            return this.createToken("Operator", this.getNextChar());
+        }
         return undefined;
     }
 
-    id = getNextChar(index, length);
-    while (true) {
-        ch = peekNextChar(index, length);
-        if (!isIdentifiesStart(ch)) {
-            break;
+    isIdentifiesStart(ch: string) {
+        return ch === "_" || this.isLetter(ch);
+    }
+
+    isIdentifierPart(ch: string) {
+        return this.isIdentifiesStart(ch) || this.isDecimalDigit(ch);
+    }
+
+    scanIdentifier() {
+        let ch, id;
+
+        ch = this.peekNextChar();
+        if (!this.isIdentifiesStart(ch)) {
+            return undefined;
         }
-        id += getNextChar(index, length);
-    }
 
-    return createToken("Identifier", id);
-}
-
-function scanNumber(index: number, length: number) {
-    let ch = peekNextChar(index, length);
-    if (!isDecimalDigit(ch) && ch !== ".") {
-        return undefined;
-    }
-
-    let number = "";
-    if (ch !== ".") {
-        number = getNextChar(index, length);
+        id = this.getNextChar();
         while (true) {
-            ch = peekNextChar(index, length);
-            if (!isDecimalDigit(ch)) {
+            ch = this.peekNextChar();
+            if (!this.isIdentifiesStart(ch)) {
                 break;
             }
-            number += getNextChar(index, length);
+            id += this.getNextChar();
         }
+
+        return this.createToken("Identifier", id);
     }
-    if (ch === ".") {
-        number = getNextChar(index, length);
-        while (true) {
-            ch = peekNextChar(index, length);
-            if (!isDecimalDigit(ch)) {
-                break;
-            }
-            number += getNextChar(index, length);
+
+    scanNumber() {
+        let ch = this.peekNextChar();
+        if (!this.isDecimalDigit(ch) && ch !== ".") {
+            return undefined;
         }
-    }
-    if (ch === "e" || ch === "e") {
-        number += getNextChar(index, length);
-        ch = peekNextChar(index, length);
-        if (ch === "+" || ch === "-") {
-            number += getNextChar(index, length);
+
+        let number = "";
+        if (ch !== ".") {
+            number = this.getNextChar();
             while (true) {
-                ch = peekNextChar(index, length);
-                if (!isDecimalDigit(ch)) {
+                ch = this.peekNextChar();
+                if (!this.isDecimalDigit(ch)) {
                     break;
                 }
-                number += getNextChar(index, length);
+                number += this.getNextChar();
             }
-        } else {
-            throw new SyntaxError("Unexpected character after exponent sign");
         }
+        if (ch === ".") {
+            number = this.getNextChar();
+            while (true) {
+                ch = this.peekNextChar();
+                if (!this.isDecimalDigit(ch)) {
+                    break;
+                }
+                number += this.getNextChar();
+            }
+        }
+        if (ch === "e" || ch === "e") {
+            number += this.getNextChar();
+            ch = this.peekNextChar();
+            if (ch === "+" || ch === "-") {
+                number += this.getNextChar();
+                while (true) {
+                    ch = this.peekNextChar();
+                    if (!this.isDecimalDigit(ch)) {
+                        break;
+                    }
+                    number += this.getNextChar();
+                }
+            } else {
+                throw new SyntaxError("Unexpected character after exponent sign");
+            }
+        }
+        return this.createToken("Number", number);
     }
-    return createToken("Number", number);
-}
 
-function next(index: number, length: number) {
-    let token;
+    next() {
+        let token;
 
-    skipSpaces(index, length);
-    if (index >= length) {
-        return undefined;
+        this.skipSpaces();
+        if (this.index >= this.length) {
+            return undefined;
+        }
+
+        token = this.scanNumber();
+        if (typeof token !== "undefined") {
+            return token;
+        }
+
+        token = this.scanOperator();
+        if (typeof token !== "undefined") {
+            return token;
+        }
+
+        token = this.scanIdentifier();
+        if (typeof token !== "undefined") {
+            return token;
+        }
+
+        throw new SyntaxError("Unknown token from character " + this.peekNextChar());
     }
-
-    token = scanNumber(index, length);
-    if (typeof token !== "undefined") {
-        return token;
-    }
-
-    token = scanOperator(index, length);
-    if (typeof token !== "undefined") {
-        return token;
-    }
-
-    token = scanIdentifier(index, length);
-    if (typeof token !== "undefined") {
-        return token;
-    }
-
-    throw new SyntaxError("Unknown token from character " + peekNextChar(index, length));
 }
