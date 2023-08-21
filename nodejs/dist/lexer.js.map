@@ -1,1 +1,1 @@
-{"version":3,"file":"lexer.js","sourceRoot":"","sources":["../src/lexer.ts"],"names":[],"mappings":";AAAA,SAAS,YAAY,CAAC,EAAU;IAC5B,OAAO,EAAE,KAAK,MAAM,IAAI,EAAE,KAAK,GAAG,IAAI,EAAE,KAAK,OAAO,CAAC;AACzD,CAAC;AAED,OAAO,CAAC,GAAG,CAAC,GAAG,CAAC,CAAC"}
+{"version":3,"file":"lexer.js","sourceRoot":"","sources":["../src/lexer.ts"],"names":[],"mappings":""}
