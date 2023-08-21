@@ -1,4 +1,4 @@
-class Lexer {
+export class Lexer {
     index = 0;
     length;
     expression;
