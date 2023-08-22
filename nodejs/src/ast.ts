@@ -2,6 +2,9 @@ export class AST {
     eval(): number {
         return 0;
     }
+    stringify() {
+        return "";
+    }
 }
 
 export class ASTLeaf extends AST {
@@ -31,7 +34,7 @@ export class ASTPlus extends AST {
         return this._leftNode.eval() + this._rightNode.eval();
     }
     stringify() {
-        return `${this._leftNode.toString()} + ${this._rightNode.toString()}`;
+        return `(${this._leftNode.stringify()} + ${this._rightNode.stringify()})`;
     }
 }
 
@@ -48,7 +51,7 @@ export class ASTMinus extends AST {
         return this._leftNode.eval() - this._rightNode.eval();
     }
     stringify() {
-        return `${this._leftNode.toString()} - ${this._rightNode.toString()}`;
+        return `(${this._leftNode.stringify()} - ${this._rightNode.stringify()})`;
     }
 }
 
@@ -65,7 +68,7 @@ export class ASTMultiply extends AST {
         return this._leftNode.eval() * this._rightNode.eval();
     }
     stringify() {
-        return `${this._leftNode.toString()} * ${this._rightNode.toString()}`;
+        return `$({this._leftNode.stringify()} * ${this._rightNode.stringify()})`;
     }
 }
 
@@ -82,6 +85,6 @@ export class ASTDivide extends AST {
         return this._leftNode.eval() / this._rightNode.eval();
     }
     stringify() {
-        return `${this._leftNode.toString()} / ${this._rightNode.toString()}`;
+        return `(${this._leftNode.stringify()} / ${this._rightNode.stringify()})`;
     }
 }
