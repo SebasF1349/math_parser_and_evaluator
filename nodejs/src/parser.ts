@@ -1,4 +1,4 @@
-import { ASTDivide, ASTLeaf, ASTMinus, ASTMultiply, ASTPlus } from "./ast.js";
+import { AST, ASTDivide, ASTLeaf, ASTMinus, ASTMultiply, ASTPlus } from "./ast.js";
 import { EToken, Tokens } from "./tokens.js";
 
 export class Parser {
@@ -21,7 +21,7 @@ export class Parser {
     }
 
     parseExp() {
-        let result = this.factor();
+        let result: AST = this.factor();
         while (
             this.curr_token._token !== EToken.EOF &&
             result !== null &&
@@ -42,7 +42,7 @@ export class Parser {
     }
 
     factor() {
-        let factor = this.term();
+        let factor: AST = this.term();
         while (
             this.curr_token._token !== EToken.EOF &&
             factor !== null &&
@@ -62,7 +62,7 @@ export class Parser {
     }
 
     term() {
-        let term = null;
+        let term: AST = null;
         if (this.curr_token._token === EToken.LBRACE) {
             this.getNext();
             term = this.parseExp();
