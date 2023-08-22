@@ -66,6 +66,7 @@ export class Parser {
         if (this.curr_token._token === EToken.LBRACE) {
             this.getNext();
             term = this.parseExp();
+            //@ts-ignore
             if (this.curr_token._token !== EToken.RBRACE) {
                 throw new SyntaxError("Missing )");
             }
