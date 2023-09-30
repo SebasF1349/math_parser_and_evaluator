@@ -1,4 +1,5 @@
-import { expect, test } from "vitest";
+import assert from "node:assert/strict";
+import test from "node:test";
 import { Lexer } from "./lexer.js";
 
 test("Test all tokens", () => {
@@ -6,16 +7,16 @@ test("Test all tokens", () => {
     let lexer = new Lexer("( ) 4646 + - * / 565.788");
     lexer.getTokens();
     let actual = lexer.stringify();
-    expect(actual).not.empty;
-    expect(actual).toBe(expected);
+    assert.notEqual(actual, "");
+    assert.equal(actual, expected);
 });
 
 test("Test invalid characters", () => {
     let lexer = new Lexer("Wabebe");
-    expect(() => lexer.getTokens()).toThrowError("W is an unsupported character");
+    assert.throws(() => lexer.getTokens(), /W is an unsupported character$/);
 });
 
 test("Test invalid decimal number", () => {
     let lexer = new Lexer("35.4533.4546");
-    expect(() => lexer.getTokens()).toThrowError("35.4533.4546 is an unsupported number");
+    assert.throws(() => lexer.getTokens(), /35.4533.4546 is an unsupported number$/);
 });
